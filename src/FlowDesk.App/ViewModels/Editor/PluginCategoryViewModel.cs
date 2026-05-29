@@ -22,6 +22,7 @@ public sealed class PluginCategoryViewModel
     public string Icon => Category.ToUpperInvariant() switch
     {
         "SAMPLES" => "\uE8B7",
+        "数据采集" => "\uE9F5",
         "MEASUREMENT" => "\uE9D9",
         "COMMUNICATION" => "\uE774",
         "CONTROL" => "\uE7FC",
