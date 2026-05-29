@@ -27,3 +27,5 @@ Use the .NET SDK commands below:
 - `dotnet run --project tests/FlowDesk.Core.Tests/FlowDesk.Core.Tests.csproj`
 
 `FlowDesk.App` sets `EnableWindowsTargeting=true`, so it can compile on Linux build agents. Running the WPF application still requires Windows.
+
+On Linux agents, use the official Microsoft .NET SDK distribution rather than distro-packaged SDKs if WPF compilation fails with a missing `Microsoft.NET.Sdk.WindowsDesktop` target.

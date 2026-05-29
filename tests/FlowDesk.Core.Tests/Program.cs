@@ -139,7 +139,7 @@ static void AssertThrows<TException>(Action action)
     throw new InvalidOperationException($"Expected exception '{typeof(TException).Name}' was not thrown.");
 }
 
-private sealed class TestPlugin : IWorkflowStepPlugin
+sealed class TestPlugin : IWorkflowStepPlugin
 {
     private readonly Func<WorkflowExecutionContext, StepExecutionResult> _execute;
 

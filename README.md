@@ -19,6 +19,8 @@ Install the .NET 8 SDK, then run:
 
 `FlowDesk.App` targets `net8.0-windows` with WPF enabled. The project sets `EnableWindowsTargeting=true` so it can be compiled on non-Windows build agents, while running the desktop application still requires Windows.
 
+On Linux build agents, use the official Microsoft .NET SDK distribution. Some distro-packaged SDKs omit `Microsoft.NET.Sdk.WindowsDesktop`, which is required to compile the WPF project.
+
 ## Plugin model
 
 Workflow plugins implement `IWorkflowStepPlugin` and return an `IWorkflowStepExecutor`. Drop plugin assemblies into a `Plugins` directory next to the application executable to load them at startup.
