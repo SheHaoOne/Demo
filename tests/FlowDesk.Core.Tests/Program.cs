@@ -113,8 +113,9 @@ static Task JsonSerializerRoundTripsWorkflowSequences()
 static Task TdmsFileReaderGeneratesDemoDataForMissingFile()
 {
     var reader = new TdmsFileReader();
-    // 不存在的 .tdms 文件 → 应抛出 FileNotFoundException
-    AssertThrows<FileNotFoundException>(() => reader.Read("/tmp/__nonexistent__.tdms"));
+    var data = reader.Read("/tmp/__nonexistent__.tdms");
+    AssertEqual(true, data.Channels.Count > 0, "应返回演示数据通道");
+    AssertEqual("/tmp/__nonexistent__.tdms", data.FilePath, "文件路径");
     return Task.CompletedTask;
 }
 
