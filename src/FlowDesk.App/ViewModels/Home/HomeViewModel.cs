@@ -97,6 +97,10 @@ public sealed class HomeViewModel : ObservableObject
                     node.Status = entry.Succeeded ? "成功" : "失败";
                     node.Message = entry.Message;
                     node.Duration = sw.ElapsedMilliseconds + " ms";
+
+                    // 传递 TDMS 图表数据
+                    if (entry.Attachments.TryGetValue("tdmsData", out var data) && data is TdmsFileData tdms)
+                        node.SetChartData(tdms);
                 }
                 var icon = entry.Succeeded ? "OK" : "FAIL";
                 LogEntries.Add($"{entry.Timestamp:HH:mm:ss} [{icon}] {entry.StepDisplayName}: {entry.Message}");
