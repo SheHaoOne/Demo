@@ -18,4 +18,16 @@ public sealed class PluginCardViewModel
     public string Category => Plugin.Descriptor.Category;
     public string Description => Plugin.Descriptor.Description;
     public string Version => Plugin.Descriptor.Version;
+
+    /// <summary>
+    /// 步骤图标（使用 Segoe MDL2 Assets 字符）。
+    /// </summary>
+    public string Icon => Plugin.Descriptor.Category.ToUpperInvariant() switch
+    {
+        "SAMPLES" => "\uE8B7",
+        "MEASUREMENT" => "\uE9D9",
+        "COMMUNICATION" => "\uE774",
+        "CONTROL" => "\uE7FC",
+        _ => "\uE737"
+    };
 }

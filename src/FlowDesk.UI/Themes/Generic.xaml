@@ -2,9 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
-        <!-- 默认加载亮色主题画刷（运行时由 ThemeManager 动态替换） -->
-        <ResourceDictionary Source="pack://application:,,,/FlowDesk.UI;component/Themes/Light.xaml" />
-        <!-- 引用主题画刷的控件样式 -->
+        <!-- 控件样式（主题画刷由 WpfThemeService 在运行时动态添加到 MergedDictionaries 末尾） -->
         <ResourceDictionary Source="pack://application:,,,/FlowDesk.UI;component/Themes/ControlStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 

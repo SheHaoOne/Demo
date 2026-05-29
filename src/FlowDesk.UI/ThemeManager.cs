@@ -30,7 +30,7 @@ public static class ThemeManager
 
         var uri = theme == AppTheme.Dark ? DarkThemeUri : LightThemeUri;
         _currentThemeDictionary = new ResourceDictionary { Source = uri };
-        mergedDicts.Insert(0, _currentThemeDictionary);
+        mergedDicts.Add(_currentThemeDictionary);
         _currentTheme = theme;
     }
 

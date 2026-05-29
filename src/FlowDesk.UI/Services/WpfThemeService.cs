@@ -30,7 +30,7 @@ public sealed class WpfThemeService : IThemeService
 
         var uri = theme == AppTheme.Dark ? DarkThemeUri : LightThemeUri;
         _currentThemeDictionary = new ResourceDictionary { Source = uri };
-        mergedDicts.Insert(0, _currentThemeDictionary);
+        mergedDicts.Add(_currentThemeDictionary);
 
         CurrentTheme = theme;
     }

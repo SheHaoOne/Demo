@@ -15,4 +15,16 @@ public sealed class PluginCategoryViewModel
 
     public string Category { get; }
     public ObservableCollection<PluginCardViewModel> Plugins { get; }
+
+    /// <summary>
+    /// 分类图标（使用 Segoe MDL2 Assets 字符）。
+    /// </summary>
+    public string Icon => Category.ToUpperInvariant() switch
+    {
+        "SAMPLES" => "\uE8B7",
+        "MEASUREMENT" => "\uE9D9",
+        "COMMUNICATION" => "\uE774",
+        "CONTROL" => "\uE7FC",
+        _ => "\uE737"
+    };
 }

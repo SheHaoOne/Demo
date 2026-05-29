@@ -6,6 +6,7 @@ using FlowDesk.App.ViewModels.Shell;
 using FlowDesk.Core;
 using FlowDesk.UI.Mvvm;
 using FlowDesk.UI.Services;
+using FlowDesk.UI.Themes;
 
 namespace FlowDesk.App.Composition;
 
@@ -19,13 +20,18 @@ public static class AppCompositionRoot
         // 基础设施
         var catalog = AppBootstrapper.CreatePluginCatalog();
         var runner = new WorkflowRunner(catalog);
+        var serializer = new JsonWorkflowSerializer();
         var executionService = new WorkflowExecutionService(runner);
         var themeService = new WpfThemeService();
+        var fileDialogService = new WpfFileDialogService();
+
+        // 初始化默认主题
+        themeService.ApplyTheme(AppTheme.Light);
 
         // 页面 ViewModel
         var homePage = new HomeViewModel(executionService);
         var configPage = new ConfigViewModel();
-        var editorPage = new SequenceEditorViewModel(catalog);
+        var editorPage = new SequenceEditorViewModel(catalog, serializer, fileDialogService);
 
         // 页面间联动：编辑器 → 首页
         editorPage.SequenceReady += (_, sequence) => homePage.LoadSequence(sequence);
