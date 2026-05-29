@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using FlowDesk.Abstractions;
 using FlowDesk.App.Services;
 using FlowDesk.Core;
+using FlowDesk.UI;
 using FlowDesk.UI.Mvvm;
 
 namespace FlowDesk.App.ViewModels;
@@ -16,6 +17,7 @@ public sealed class MainWindowViewModel : ObservableObject
     private PluginViewModel? _selectedPlugin;
     private WorkflowStepViewModel? _selectedStep;
     private bool _isRunning;
+    private string _themeLabel = "切换深色";
 
     public MainWindowViewModel(PluginCatalog catalog, WorkflowFileService fileService)
     {
@@ -35,6 +37,7 @@ public sealed class MainWindowViewModel : ObservableObject
         MoveStepUpCommand = new RelayCommand(_ => MoveSelectedStep(-1), _ => CanMoveSelectedStep(-1) && !IsRunning);
         MoveStepDownCommand = new RelayCommand(_ => MoveSelectedStep(1), _ => CanMoveSelectedStep(1) && !IsRunning);
         RunCommand = new RelayCommand(async _ => await RunAsync(), _ => Steps.Count > 0 && !IsRunning);
+        ToggleThemeCommand = new RelayCommand(_ => ToggleTheme());
     }
 
     public ObservableCollection<PluginViewModel> Plugins { get; }
@@ -58,6 +61,14 @@ public sealed class MainWindowViewModel : ObservableObject
     public RelayCommand MoveStepDownCommand { get; }
 
     public RelayCommand RunCommand { get; }
+
+    public RelayCommand ToggleThemeCommand { get; }
+
+    public string ThemeLabel
+    {
+        get => _themeLabel;
+        private set => SetProperty(ref _themeLabel, value);
+    }
 
     public string SequenceName
     {
@@ -257,6 +268,12 @@ public sealed class MainWindowViewModel : ObservableObject
 
         var newIndex = Steps.IndexOf(SelectedStep) + offset;
         return newIndex >= 0 && newIndex < Steps.Count;
+    }
+
+    private void ToggleTheme()
+    {
+        ThemeManager.ToggleTheme();
+        ThemeLabel = ThemeManager.CurrentTheme == AppTheme.Light ? "切换深色" : "切换亮色";
     }
 
     private void RefreshCommands()
