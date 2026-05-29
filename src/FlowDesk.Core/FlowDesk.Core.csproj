@@ -8,4 +8,8 @@
   <ItemGroup>
     <ProjectReference Include="..\FlowDesk.Abstractions\FlowDesk.Abstractions.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TDMSReader" Version="3.1.0" />
+  </ItemGroup>
 </Project>

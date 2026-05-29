@@ -1,0 +1,31 @@
+---
+description: 严格遵循 SOLID 六大设计原则
+globs: "**/*.cs"
+alwaysApply: false
+---
+
+# SOLID 设计原则
+
+## SRP — 单一职责
+- 每个类只有一个变化原因
+- ViewModel 不包含业务逻辑，委托给 Service 层
+- 每个文件只包含一个类型（类/接口/枚举）
+
+## OCP — 开闭原则
+- 使用注册表/字典替代 switch-case 硬编码分支
+- 新增功能通过添加子类或新注册项实现，不修改现有代码
+- 示例：`PropertyEditorViewModel.Create()` 工厂方法、页面注册表
+
+## LSP — 里氏替换
+- 接口实现必须可替换：`IPluginCatalog`、`IWorkflowRunner`、`IThemeService`
+
+## ISP — 接口隔离
+- 接口职责单一，不强制依赖不需要的方法
+- 示例：`IWorkflowExecutionService` 只暴露执行方法
+
+## DIP — 依赖反转
+- ViewModel 依赖接口而非具体类
+- 具体依赖在 `AppCompositionRoot` 中创建和注入
+
+## LoD — 迪米特法则
+- 组件间通过事件或服务通信，不直接操作其他对象内部状态

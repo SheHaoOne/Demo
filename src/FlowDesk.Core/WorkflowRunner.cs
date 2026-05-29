@@ -2,11 +2,11 @@ using FlowDesk.Abstractions;
 
 namespace FlowDesk.Core;
 
-public sealed class WorkflowRunner
+public sealed class WorkflowRunner : IWorkflowRunner
 {
-    private readonly PluginCatalog _catalog;
+    private readonly IPluginCatalog _catalog;
 
-    public WorkflowRunner(PluginCatalog catalog)
+    public WorkflowRunner(IPluginCatalog catalog)
     {
         _catalog = catalog;
     }
@@ -33,6 +33,13 @@ public sealed class WorkflowRunner
                 step.DisplayName,
                 result.Succeeded,
                 result.Message);
+
+            // 将运行时数据附加到日志条目
+            if (variables.TryGetValue("tdmsData", out var tdms) && tdms is not null)
+            {
+                entry.Attachments["tdmsData"] = tdms;
+                variables.Remove("tdmsData"); // 用完清理，避免传递到后续步骤
+            }
 
             entries.Add(entry);
             StepCompleted?.Invoke(this, entry);

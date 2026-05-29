@@ -1,0 +1,30 @@
+---
+description: FlowDesk 项目文件结构和分类规范
+alwaysApply: true
+---
+
+# 文件结构规范
+
+## 按功能模块组织子目录
+
+```
+ViewModels/
+  Shell/        — 框架外壳（导航、布局）
+  Home/         — 首页（运行、状态）
+  Editor/       — 序列编辑器
+  Config/       — 配置页面
+  Shared/       — 跨模块共用的 ViewModel
+Views/
+  Home/         — 首页视图
+  Editor/       — 编辑器视图
+  Config/       — 配置视图
+Services/       — 应用服务接口和实现
+Composition/    — 组合根
+```
+
+## 规则
+- 每个文件只包含一个公开类型
+- 文件路径必须与命名空间一致
+- 嵌套类型必须拆分到独立文件
+- 不允许出现死代码（未引用的类、未使用的字段）
+- 新增页面在 `AppCompositionRoot` 注册，不修改 `ShellViewModel`

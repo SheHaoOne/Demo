@@ -13,10 +13,19 @@ This repository contains a .NET 8 WPF desktop application skeleton named FlowDes
 
 ### Project layout
 
-- `src/FlowDesk.Abstractions` - plugin contracts and workflow data models.
-- `src/FlowDesk.Core` - plugin catalog, assembly loader, workflow runner, and JSON serializer.
+- `src/FlowDesk.Abstractions` - plugin contracts, workflow data models, and abstraction interfaces (`IWorkflowRunner`, `IWorkflowSerializer`, `IPluginCatalog`).
+- `src/FlowDesk.Core` - plugin catalog, assembly loader, workflow runner, and JSON serializer (implements Abstractions interfaces).
 - `src/FlowDesk.SamplePlugin` - built-in sample workflow step plugins.
-- `src/FlowDesk.App` - WPF MVVM desktop shell.
+- `src/FlowDesk.UI` - shared WPF styles, resource dictionaries, MVVM infrastructure (`ObservableObject`, `RelayCommand`), theme service (`IThemeService` / `WpfThemeService`), and navigation models.
+- `src/FlowDesk.App` - WPF MVVM desktop shell with SOLID-based structure:
+  - `Composition/` - `AppCompositionRoot` (DI wiring).
+  - `Services/` - `IWorkflowExecutionService` / `WorkflowExecutionService`, `AppBootstrapper`.
+  - `ViewModels/Shell/` - `ShellViewModel` (navigation + layout only).
+  - `ViewModels/Home/` - `HomeViewModel`, `StepNodeViewModel`.
+  - `ViewModels/Editor/` - `SequenceEditorViewModel`, `WorkflowStepViewModel`, `PluginCardViewModel`, `PluginCategoryViewModel`.
+  - `ViewModels/Config/` - `ConfigViewModel`.
+  - `ViewModels/Shared/` - `KeyValueViewModel` (replaces duplicate `SettingViewModel` / `ConfigItemViewModel`).
+  - `Views/Home/`, `Views/Config/`, `Views/Editor/` - XAML views in matching subdirectories.
 - `tests/FlowDesk.Core.Tests` - dependency-free executable test project.
 
 ### Build and test
@@ -29,3 +38,9 @@ Use the .NET SDK commands below:
 `FlowDesk.App` sets `EnableWindowsTargeting=true`, so it can compile on Linux build agents. Running the WPF application still requires Windows.
 
 On Linux agents, use the official Microsoft .NET SDK distribution rather than distro-packaged SDKs if WPF compilation fails with a missing `Microsoft.NET.Sdk.WindowsDesktop` target.
+
+### Cloud VM notes
+
+- The .NET 8 SDK is installed to `$HOME/.dotnet`. The update script exports `DOTNET_ROOT` and `PATH` automatically; if you open a new shell, source `~/.bashrc` or set `export PATH="$HOME/.dotnet:$PATH"`.
+- The test project (`FlowDesk.Core.Tests`) is a plain console app, not an xUnit/NUnit/MSTest project. Run it with `dotnet run`, not `dotnet test`.
+- The WPF app (`FlowDesk.App`) compiles on Linux but cannot launch a GUI window. Validate it via `dotnet build` only on Linux agents.

@@ -1,0 +1,117 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using FlowDesk.Abstractions;
+using ScottPlot;
+
+namespace FlowDesk.App.Views.Home;
+
+/// <summary>
+/// TDMS 波形图查看窗口，使用 ScottPlot 库绘制，支持缩放、平移和多通道切换。
+/// </summary>
+public partial class WaveformChartWindow : Window
+{
+    private static readonly ScottPlot.Color[] PlotColors =
+    [
+        ScottPlot.Color.FromHex("#2196F3"),
+        ScottPlot.Color.FromHex("#4CAF50"),
+        ScottPlot.Color.FromHex("#F44336"),
+        ScottPlot.Color.FromHex("#FF9800"),
+        ScottPlot.Color.FromHex("#9C27B0"),
+        ScottPlot.Color.FromHex("#00BCD4"),
+        ScottPlot.Color.FromHex("#FFC107"),
+        ScottPlot.Color.FromHex("#795548")
+    ];
+
+    /// <summary>
+    /// ScottPlot 绘图区使用 SkiaSharp 渲染，需指定支持中文的系统字体。
+    /// </summary>
+    private const string PlotFontName = "Microsoft YaHei UI";
+
+    private readonly TdmsFileData _data;
+    private readonly Dictionary<int, bool> _channelVisible = new();
+
+    public WaveformChartWindow(TdmsFileData data)
+    {
+        _data = data;
+        InitializeComponent();
+        WpfPlot.Plot.Font.Set(PlotFontName);
+
+        var firstCh = data.Channels.FirstOrDefault();
+        var rateInfo = firstCh?.SampleRate > 0 ? $"{firstCh.SampleRate} Hz" : "未知";
+        var durationInfo = firstCh?.Duration > 0 ? $"{firstCh.Duration:F3} 秒" : "";
+        FilePathText.Text = $"文件：{data.FilePath}  |  {data.Channels.Count} 个通道  |  采样率：{rateInfo}  {durationInfo}";
+
+        for (var i = 0; i < data.Channels.Count; i++)
+        {
+            _channelVisible[i] = true;
+            var wpfColor = System.Windows.Media.Color.FromRgb(
+                PlotColors[i % PlotColors.Length].R,
+                PlotColors[i % PlotColors.Length].G,
+                PlotColors[i % PlotColors.Length].B);
+
+            var cb = new CheckBox
+            {
+                Content = data.Channels[i].DisplayName,
+                IsChecked = true,
+                Foreground = new SolidColorBrush(wpfColor),
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 0, 16, 0),
+                Tag = i
+            };
+            cb.Checked += ChannelToggle_Changed;
+            cb.Unchecked += ChannelToggle_Changed;
+            ChannelList.Items.Add(cb);
+        }
+
+        DrawChart();
+    }
+
+    private void ChannelToggle_Changed(object sender, RoutedEventArgs e)
+    {
+        if (sender is CheckBox { Tag: int idx })
+        {
+            _channelVisible[idx] = ((CheckBox)sender).IsChecked == true;
+            DrawChart();
+        }
+    }
+
+    private void DrawChart()
+    {
+        var plt = WpfPlot.Plot;
+        plt.Clear();
+        plt.Font.Set(PlotFontName);
+
+        plt.Title("TDMS 波形数据");
+        plt.YLabel("幅值");
+
+        for (var i = 0; i < _data.Channels.Count; i++)
+        {
+            if (!_channelVisible.GetValueOrDefault(i, false)) continue;
+
+            var ch = _data.Channels[i];
+            if (ch.Values.Length == 0) continue;
+
+            if (ch.SampleRate > 0)
+            {
+                var period = 1.0 / ch.SampleRate;
+                var sig = plt.Add.Signal(ch.Values, period);
+                sig.Color = PlotColors[i % PlotColors.Length];
+                sig.LineWidth = 1.5f;
+            }
+            else
+            {
+                var sig = plt.Add.Signal(ch.Values);
+                sig.Color = PlotColors[i % PlotColors.Length];
+                sig.LineWidth = 1.5f;
+            }
+        }
+
+        var hasTimeAxis = _data.Channels.Where((c, idx) => _channelVisible.GetValueOrDefault(idx, false)).Any(c => c.SampleRate > 0);
+        plt.XLabel(hasTimeAxis ? "时间 (秒)" : "采样点");
+
+        plt.Font.Automatic();
+        plt.HideLegend();
+        WpfPlot.Refresh();
+    }
+}

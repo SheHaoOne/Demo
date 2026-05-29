@@ -1,0 +1,23 @@
+---
+description: WPF MVVM 和主题系统开发规范
+globs: "**/*.{cs,xaml}"
+alwaysApply: false
+---
+
+# WPF MVVM 规范
+
+## 主题系统
+- 颜色画刷定义在 `Light.xaml` / `Dark.xaml`
+- 控件样式在 `ControlStyles.xaml` 中使用 `DynamicResource` 引用画刷
+- `Generic.xaml` 只合并 `ControlStyles.xaml`，不包含主题色文件
+- 主题切换通过 `IThemeService` 将字典 `Add` 到末尾（最高优先级）
+
+## 属性编辑器
+- 插件通过 `PropertyDescriptors` 声明类型化属性
+- 新增属性类型：添加 `PropertyEditorViewModel` 子类 + XAML DataTemplate
+- 无描述符的插件自动降级为字符串编辑器
+
+## View 层
+- code-behind 仅处理 UI 交互（拖拽、TreeView 选中等）
+- 业务逻辑全部在 ViewModel 中
+- 页面通过 `DataTemplate` 映射 ViewModel 类型

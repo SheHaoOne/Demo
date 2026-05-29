@@ -6,7 +6,10 @@ var tests = new (string Name, Func<Task> Run)[]
     ("Plugin catalog rejects duplicate ids", PluginCatalogRejectsDuplicateIds),
     ("Workflow runner executes steps in order", WorkflowRunnerExecutesStepsInOrder),
     ("Workflow runner stops after failure", WorkflowRunnerStopsAfterFailure),
-    ("JSON serializer round trips workflow sequences", JsonSerializerRoundTripsWorkflowSequences)
+    ("JSON serializer round trips workflow sequences", JsonSerializerRoundTripsWorkflowSequences),
+    ("TdmsFileReader generates demo data for missing file", TdmsFileReaderGeneratesDemoDataForMissingFile),
+    ("TdmsFileReader throws on null path", TdmsFileReaderThrowsOnNullPath),
+    ("WorkflowRunner attaches tdmsData to log entry", WorkflowRunnerAttachesTdmsDataToLogEntry)
 };
 
 foreach (var test in tests)
@@ -107,6 +110,53 @@ static Task JsonSerializerRoundTripsWorkflowSequences()
     return Task.CompletedTask;
 }
 
+static Task TdmsFileReaderGeneratesDemoDataForMissingFile()
+{
+    var reader = new TdmsFileReader();
+    var data = reader.Read("/tmp/__nonexistent__.tdms");
+    AssertEqual(true, data.Channels.Count > 0, "应返回演示数据通道");
+    AssertEqual("/tmp/__nonexistent__.tdms", data.FilePath, "文件路径");
+    return Task.CompletedTask;
+}
+
+static Task TdmsFileReaderThrowsOnNullPath()
+{
+    var reader = new TdmsFileReader();
+    AssertThrows<ArgumentException>(() => reader.Read(""));
+    AssertThrows<ArgumentException>(() => reader.Read("   "));
+    return Task.CompletedTask;
+}
+
+static async Task WorkflowRunnerAttachesTdmsDataToLogEntry()
+{
+    var catalog = new PluginCatalog();
+    catalog.Register(new TestPlugin("test.tdms", context =>
+    {
+        // 模拟 DataImportStepPlugin 的行为：将 TdmsFileData 写入 variables
+        var data = new TdmsFileData("test.tdms",
+        [
+            new TdmsChannelData("Group1", "Ch1", [1.0, 2.0, 3.0])
+        ]);
+        context.Variables["tdmsData"] = data;
+        return StepExecutionResult.Success("OK");
+    }));
+
+    var sequence = new WorkflowSequence
+    {
+        Name = "TDMS attachment",
+        Steps = [CreateStep("test.tdms", "Import")]
+    };
+
+    var entries = await new WorkflowRunner(catalog).RunAsync(sequence);
+
+    AssertEqual(1, entries.Count, "Entry count");
+    AssertEqual(true, entries[0].Attachments.ContainsKey("tdmsData"), "Has tdmsData attachment");
+    var attached = entries[0].Attachments["tdmsData"] as TdmsFileData;
+    AssertEqual(true, attached is not null, "Attachment is TdmsFileData");
+    AssertEqual(1, attached!.Channels.Count, "Channel count");
+    AssertEqual("Group1/Ch1", attached.Channels[0].DisplayName, "Channel display name");
+}
+
 static WorkflowStepDefinition CreateStep(string pluginId, string displayName)
 {
     return new WorkflowStepDefinition
@@ -153,6 +203,8 @@ sealed class TestPlugin : IWorkflowStepPlugin
 
     public IReadOnlyDictionary<string, string> DefaultSettings { get; } =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    public IReadOnlyList<StepPropertyDescriptor> PropertyDescriptors { get; } = [];
 
     public IWorkflowStepExecutor CreateExecutor() => new TestExecutor(_execute);
 

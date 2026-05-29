@@ -12,5 +12,10 @@
     <ProjectReference Include="..\FlowDesk.Abstractions\FlowDesk.Abstractions.csproj" />
     <ProjectReference Include="..\FlowDesk.Core\FlowDesk.Core.csproj" />
     <ProjectReference Include="..\FlowDesk.SamplePlugin\FlowDesk.SamplePlugin.csproj" />
+    <ProjectReference Include="..\FlowDesk.UI\FlowDesk.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ScottPlot.WPF" Version="5.1.58" NoWarn="NU1701" />
   </ItemGroup>
 </Project>

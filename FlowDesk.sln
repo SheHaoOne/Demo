@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -11,6 +11,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowDesk.App", "src\FlowDesk.App\FlowDesk.App.csproj", "{761CCB8F-52FE-4506-A7F3-FA00335D59E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowDesk.Core.Tests", "tests\FlowDesk.Core.Tests\FlowDesk.Core.Tests.csproj", "{9CC2A278-F9DF-4805-9489-6EB0B5EC2F66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F2793A05-0293-4BEF-ADEB-8AB8BE157561}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowDesk.UI", "src\FlowDesk.UI\FlowDesk.UI.csproj", "{9846273F-6EE6-43D9-B3D0-0203705A586E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,8 +42,15 @@ Global
 		{9CC2A278-F9DF-4805-9489-6EB0B5EC2F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CC2A278-F9DF-4805-9489-6EB0B5EC2F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CC2A278-F9DF-4805-9489-6EB0B5EC2F66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9846273F-6EE6-43D9-B3D0-0203705A586E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9846273F-6EE6-43D9-B3D0-0203705A586E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9846273F-6EE6-43D9-B3D0-0203705A586E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9846273F-6EE6-43D9-B3D0-0203705A586E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9846273F-6EE6-43D9-B3D0-0203705A586E} = {F2793A05-0293-4BEF-ADEB-8AB8BE157561}
 	EndGlobalSection
 EndGlobal

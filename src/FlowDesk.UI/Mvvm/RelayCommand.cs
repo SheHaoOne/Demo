@@ -1,6 +1,6 @@
 using System.Windows.Input;
 
-namespace FlowDesk.App.ViewModels;
+namespace FlowDesk.UI.Mvvm;
 
 public sealed class RelayCommand : ICommand
 {

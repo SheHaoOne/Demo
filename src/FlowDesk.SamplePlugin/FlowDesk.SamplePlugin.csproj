@@ -7,5 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FlowDesk.Abstractions\FlowDesk.Abstractions.csproj" />
+    <ProjectReference Include="..\FlowDesk.Core\FlowDesk.Core.csproj" />
   </ItemGroup>
 </Project>
