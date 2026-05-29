@@ -12,5 +12,6 @@
     <ProjectReference Include="..\FlowDesk.Abstractions\FlowDesk.Abstractions.csproj" />
     <ProjectReference Include="..\FlowDesk.Core\FlowDesk.Core.csproj" />
     <ProjectReference Include="..\FlowDesk.SamplePlugin\FlowDesk.SamplePlugin.csproj" />
+    <ProjectReference Include="..\FlowDesk.UI\FlowDesk.UI.csproj" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using FlowDesk.Abstractions;
+using FlowDesk.UI.Mvvm;
 
 namespace FlowDesk.App.ViewModels;
 

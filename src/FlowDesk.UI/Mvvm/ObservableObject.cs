@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace FlowDesk.App.ViewModels;
+namespace FlowDesk.UI.Mvvm;
 
 public abstract class ObservableObject : INotifyPropertyChanged
 {

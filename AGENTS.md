@@ -16,7 +16,8 @@ This repository contains a .NET 8 WPF desktop application skeleton named FlowDes
 - `src/FlowDesk.Abstractions` - plugin contracts and workflow data models.
 - `src/FlowDesk.Core` - plugin catalog, assembly loader, workflow runner, and JSON serializer.
 - `src/FlowDesk.SamplePlugin` - built-in sample workflow step plugins.
-- `src/FlowDesk.App` - WPF MVVM desktop shell.
+- `src/FlowDesk.UI` - shared WPF styles, resource dictionaries, and MVVM infrastructure (`ObservableObject`, `RelayCommand`).
+- `src/FlowDesk.App` - WPF MVVM desktop shell (references `FlowDesk.UI` for styles and MVVM base classes).
 - `tests/FlowDesk.Core.Tests` - dependency-free executable test project.
 
 ### Build and test
