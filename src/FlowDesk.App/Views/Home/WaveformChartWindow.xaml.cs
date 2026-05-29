@@ -31,7 +31,10 @@ public partial class WaveformChartWindow : Window
         _data = data;
         InitializeComponent();
 
-        FilePathText.Text = $"文件：{data.FilePath}  |  {data.Channels.Count} 个通道";
+        var firstCh = data.Channels.FirstOrDefault();
+        var rateInfo = firstCh?.SampleRate > 0 ? $"{firstCh.SampleRate} Hz" : "未知";
+        var durationInfo = firstCh?.Duration > 0 ? $"{firstCh.Duration:F3} 秒" : "";
+        FilePathText.Text = $"文件：{data.FilePath}  |  {data.Channels.Count} 个通道  |  采样率：{rateInfo}  {durationInfo}";
 
         for (var i = 0; i < data.Channels.Count; i++)
         {
@@ -73,7 +76,6 @@ public partial class WaveformChartWindow : Window
         plt.Clear();
 
         plt.Title("TDMS 波形数据");
-        plt.XLabel("采样点");
         plt.YLabel("幅值");
 
         for (var i = 0; i < _data.Channels.Count; i++)
@@ -83,11 +85,25 @@ public partial class WaveformChartWindow : Window
             var ch = _data.Channels[i];
             if (ch.Values.Length == 0) continue;
 
-            var sig = plt.Add.Signal(ch.Values);
-            sig.LegendText = ch.DisplayName;
-            sig.Color = PlotColors[i % PlotColors.Length];
-            sig.LineWidth = 1.5f;
+            if (ch.SampleRate > 0)
+            {
+                var period = 1.0 / ch.SampleRate;
+                var sig = plt.Add.Signal(ch.Values, period);
+                sig.LegendText = $"{ch.DisplayName} ({ch.SampleRate:N0} Hz)";
+                sig.Color = PlotColors[i % PlotColors.Length];
+                sig.LineWidth = 1.5f;
+            }
+            else
+            {
+                var sig = plt.Add.Signal(ch.Values);
+                sig.LegendText = ch.DisplayName;
+                sig.Color = PlotColors[i % PlotColors.Length];
+                sig.LineWidth = 1.5f;
+            }
         }
+
+        var hasTimeAxis = _data.Channels.Where((c, idx) => _channelVisible.GetValueOrDefault(idx, false)).Any(c => c.SampleRate > 0);
+        plt.XLabel(hasTimeAxis ? "时间 (秒)" : "采样点");
 
         plt.Legend.IsVisible = true;
         WpfPlot.Refresh();
