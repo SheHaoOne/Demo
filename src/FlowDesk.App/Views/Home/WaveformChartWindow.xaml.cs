@@ -23,6 +23,11 @@ public partial class WaveformChartWindow : Window
         ScottPlot.Color.FromHex("#795548")
     ];
 
+    /// <summary>
+    /// ScottPlot 绘图区使用 SkiaSharp 渲染，需指定支持中文的系统字体。
+    /// </summary>
+    private const string PlotFontName = "Microsoft YaHei UI";
+
     private readonly TdmsFileData _data;
     private readonly Dictionary<int, bool> _channelVisible = new();
 
@@ -30,6 +35,7 @@ public partial class WaveformChartWindow : Window
     {
         _data = data;
         InitializeComponent();
+        WpfPlot.Plot.Font.Set(PlotFontName);
 
         var firstCh = data.Channels.FirstOrDefault();
         var rateInfo = firstCh?.SampleRate > 0 ? $"{firstCh.SampleRate} Hz" : "未知";
@@ -74,6 +80,7 @@ public partial class WaveformChartWindow : Window
     {
         var plt = WpfPlot.Plot;
         plt.Clear();
+        plt.Font.Set(PlotFontName);
 
         plt.Title("TDMS 波形数据");
         plt.YLabel("幅值");
@@ -89,14 +96,12 @@ public partial class WaveformChartWindow : Window
             {
                 var period = 1.0 / ch.SampleRate;
                 var sig = plt.Add.Signal(ch.Values, period);
-                sig.LegendText = $"{ch.DisplayName} ({ch.SampleRate:N0} Hz)";
                 sig.Color = PlotColors[i % PlotColors.Length];
                 sig.LineWidth = 1.5f;
             }
             else
             {
                 var sig = plt.Add.Signal(ch.Values);
-                sig.LegendText = ch.DisplayName;
                 sig.Color = PlotColors[i % PlotColors.Length];
                 sig.LineWidth = 1.5f;
             }
@@ -105,7 +110,8 @@ public partial class WaveformChartWindow : Window
         var hasTimeAxis = _data.Channels.Where((c, idx) => _channelVisible.GetValueOrDefault(idx, false)).Any(c => c.SampleRate > 0);
         plt.XLabel(hasTimeAxis ? "时间 (秒)" : "采样点");
 
-        plt.Legend.IsVisible = true;
+        plt.Font.Automatic();
+        plt.HideLegend();
         WpfPlot.Refresh();
     }
 }
