@@ -29,3 +29,9 @@ Use the .NET SDK commands below:
 `FlowDesk.App` sets `EnableWindowsTargeting=true`, so it can compile on Linux build agents. Running the WPF application still requires Windows.
 
 On Linux agents, use the official Microsoft .NET SDK distribution rather than distro-packaged SDKs if WPF compilation fails with a missing `Microsoft.NET.Sdk.WindowsDesktop` target.
+
+### Cloud VM notes
+
+- The .NET 8 SDK is installed to `$HOME/.dotnet`. The update script exports `DOTNET_ROOT` and `PATH` automatically; if you open a new shell, source `~/.bashrc` or set `export PATH="$HOME/.dotnet:$PATH"`.
+- The test project (`FlowDesk.Core.Tests`) is a plain console app, not an xUnit/NUnit/MSTest project. Run it with `dotnet run`, not `dotnet test`.
+- The WPF app (`FlowDesk.App`) compiles on Linux but cannot launch a GUI window. Validate it via `dotnet build` only on Linux agents.
