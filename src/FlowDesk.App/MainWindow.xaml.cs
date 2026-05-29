@@ -11,9 +11,15 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        var catalog = AppBootstrapper.CreatePluginCatalog();
         var serializer = new JsonWorkflowSerializer();
-        DataContext = new MainWindowViewModel(
-            AppBootstrapper.CreatePluginCatalog(),
-            new WorkflowFileService(serializer));
+
+        var homePage = new HomeViewModel(catalog);
+        var configPage = new ConfigViewModel();
+        var editorPage = new SequenceEditorViewModel(catalog, serializer);
+
+        editorPage.SequenceReady += (_, sequence) => homePage.LoadSequence(sequence);
+
+        DataContext = new ShellViewModel(homePage, configPage, editorPage);
     }
 }
