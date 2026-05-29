@@ -8,7 +8,7 @@ public sealed class DelayStepPlugin : IWorkflowStepPlugin
         "sample.delay",
         "Delay",
         "Samples",
-        "Waits for a configured number of milliseconds.",
+        "等待指定的毫秒数。",
         "1.0.0");
 
     public IReadOnlyDictionary<string, string> DefaultSettings { get; } =
@@ -16,6 +16,22 @@ public sealed class DelayStepPlugin : IWorkflowStepPlugin
         {
             ["milliseconds"] = "500"
         };
+
+    public IReadOnlyList<StepPropertyDescriptor> PropertyDescriptors { get; } =
+    [
+        new StepPropertyDescriptor
+        {
+            Name = "milliseconds",
+            DisplayName = "延迟时间",
+            Description = "等待的毫秒数",
+            Category = "常规",
+            PropertyType = StepPropertyType.Integer,
+            DefaultValue = 500,
+            MinValue = 0,
+            MaxValue = 60000,
+            IsRequired = true
+        }
+    ];
 
     public IWorkflowStepExecutor CreateExecutor() => new Executor();
 
@@ -31,11 +47,11 @@ public sealed class DelayStepPlugin : IWorkflowStepPlugin
 
             if (!int.TryParse(configuredValue, out var milliseconds) || milliseconds < 0)
             {
-                return StepExecutionResult.Failure("Delay milliseconds must be a non-negative integer.");
+                return StepExecutionResult.Failure("延迟毫秒数必须为非负整数。");
             }
 
             await Task.Delay(milliseconds, cancellationToken);
-            return StepExecutionResult.Success($"Waited {milliseconds} ms.");
+            return StepExecutionResult.Success($"等待了 {milliseconds} ms。");
         }
     }
 }

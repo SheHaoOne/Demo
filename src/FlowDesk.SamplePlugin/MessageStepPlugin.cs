@@ -8,7 +8,7 @@ public sealed class MessageStepPlugin : IWorkflowStepPlugin
         "sample.message",
         "Message",
         "Samples",
-        "Writes a message into the workflow execution log.",
+        "将消息写入工作流执行日志。",
         "1.0.0");
 
     public IReadOnlyDictionary<string, string> DefaultSettings { get; } =
@@ -16,6 +16,20 @@ public sealed class MessageStepPlugin : IWorkflowStepPlugin
         {
             ["message"] = "Hello from the workflow."
         };
+
+    public IReadOnlyList<StepPropertyDescriptor> PropertyDescriptors { get; } =
+    [
+        new StepPropertyDescriptor
+        {
+            Name = "message",
+            DisplayName = "消息内容",
+            Description = "要写入执行日志的消息文本",
+            Category = "常规",
+            PropertyType = StepPropertyType.String,
+            DefaultValue = "Hello from the workflow.",
+            IsRequired = true
+        }
+    ];
 
     public IWorkflowStepExecutor CreateExecutor() => new Executor();
 

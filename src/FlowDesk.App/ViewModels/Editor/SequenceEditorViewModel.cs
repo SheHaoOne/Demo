@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using FlowDesk.Abstractions;
 using FlowDesk.App.Services;
-using FlowDesk.App.ViewModels.Shared;
+using FlowDesk.App.ViewModels.Editor.PropertyEditors;
 using FlowDesk.UI.Mvvm;
 
 namespace FlowDesk.App.ViewModels.Editor;
@@ -13,6 +13,7 @@ public sealed class SequenceEditorViewModel : ObservableObject
 {
     private const string FileFilter = "FlowDesk 工作流 (*.flow.json)|*.flow.json|JSON 文件 (*.json)|*.json";
 
+    private readonly IPluginCatalog _catalog;
     private readonly IWorkflowSerializer _serializer;
     private readonly IFileDialogService _fileDialog;
     private WorkflowSequence _sequence = new();
@@ -28,6 +29,7 @@ public sealed class SequenceEditorViewModel : ObservableObject
 
     public SequenceEditorViewModel(IPluginCatalog catalog, IWorkflowSerializer serializer, IFileDialogService fileDialog)
     {
+        _catalog = catalog;
         _serializer = serializer;
         _fileDialog = fileDialog;
 
@@ -98,13 +100,16 @@ public sealed class SequenceEditorViewModel : ObservableObject
         {
             if (SetProperty(ref _selectedStep, value))
             {
-                OnPropertyChanged(nameof(SelectedStepSettings));
+                OnPropertyChanged(nameof(SelectedStepPropertyEditors));
                 RefreshStepCommands();
             }
         }
     }
 
-    public ObservableCollection<KeyValueViewModel>? SelectedStepSettings => SelectedStep?.Settings;
+    /// <summary>
+    /// 当前选中步骤的属性编辑器集合（绑定到右侧面板）。
+    /// </summary>
+    public ObservableCollection<PropertyEditorViewModel>? SelectedStepPropertyEditors => SelectedStep?.PropertyEditors;
 
     private void NewSequence()
     {
@@ -129,7 +134,13 @@ public sealed class SequenceEditorViewModel : ObservableObject
 
         Steps.Clear();
         foreach (var step in sequence.Steps)
-            Steps.Add(new WorkflowStepViewModel(step));
+        {
+            // 尝试从 catalog 查找插件以获取属性描述符
+            var descriptors = _catalog.TryGet(step.PluginId, out var plugin)
+                ? plugin.PropertyDescriptors
+                : null;
+            Steps.Add(new WorkflowStepViewModel(step, descriptors));
+        }
 
         StepGroups.Clear();
         foreach (var group in sequence.Groups)
@@ -177,7 +188,25 @@ public sealed class SequenceEditorViewModel : ObservableObject
             DisplayName = plugin.Descriptor.DisplayName,
             Settings = new Dictionary<string, string>(plugin.DefaultSettings, StringComparer.OrdinalIgnoreCase)
         };
-        var vm = new WorkflowStepViewModel(step);
+        var vm = new WorkflowStepViewModel(step, plugin.PropertyDescriptors);
+        Steps.Add(vm);
+        SelectedStep = vm;
+        RefreshStepCommands();
+    }
+
+    /// <summary>
+    /// 通过拖拽添加插件到工作流序列。
+    /// </summary>
+    public void AddPluginByDrag(PluginCardViewModel card)
+    {
+        var plugin = card.Plugin;
+        var step = new WorkflowStepDefinition
+        {
+            PluginId = plugin.Descriptor.Id,
+            DisplayName = plugin.Descriptor.DisplayName,
+            Settings = new Dictionary<string, string>(plugin.DefaultSettings, StringComparer.OrdinalIgnoreCase)
+        };
+        var vm = new WorkflowStepViewModel(step, plugin.PropertyDescriptors);
         Steps.Add(vm);
         SelectedStep = vm;
         RefreshStepCommands();

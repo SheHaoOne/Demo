@@ -154,6 +154,8 @@ sealed class TestPlugin : IWorkflowStepPlugin
     public IReadOnlyDictionary<string, string> DefaultSettings { get; } =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+    public IReadOnlyList<StepPropertyDescriptor> PropertyDescriptors { get; } = [];
+
     public IWorkflowStepExecutor CreateExecutor() => new TestExecutor(_execute);
 
     private sealed class TestExecutor : IWorkflowStepExecutor
