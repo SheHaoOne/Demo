@@ -1,36 +1,35 @@
 using System.Collections.ObjectModel;
-using FlowDesk.UI;
 using FlowDesk.UI.Mvvm;
 using FlowDesk.UI.Navigation;
+using FlowDesk.UI.Services;
+using FlowDesk.UI.Themes;
 
-namespace FlowDesk.App.ViewModels;
+namespace FlowDesk.App.ViewModels.Shell;
 
 /// <summary>
-/// 应用主框架 ViewModel，管理导航菜单、内容区切换和全局设置。
+/// 应用主框架 ViewModel（SRP：只负责导航切换和布局设置）。
+/// 主题切换委托给 IThemeService。
 /// </summary>
 public sealed class ShellViewModel : ObservableObject
 {
+    private readonly IThemeService _themeService;
+    private readonly Dictionary<string, ObservableObject> _pageRegistry;
     private NavigationItem? _selectedNavItem;
     private ObservableObject? _currentPage;
     private NavMenuPosition _menuPosition = NavMenuPosition.Left;
     private string _themeLabel = "切换深色";
 
-    private readonly HomeViewModel _homePage;
-    private readonly ConfigViewModel _configPage;
-    private readonly SequenceEditorViewModel _editorPage;
-
-    public ShellViewModel(HomeViewModel homePage, ConfigViewModel configPage, SequenceEditorViewModel editorPage)
+    public ShellViewModel(IThemeService themeService, IReadOnlyList<(string key, string label, string icon, ObservableObject page)> pages)
     {
-        _homePage = homePage;
-        _configPage = configPage;
-        _editorPage = editorPage;
+        _themeService = themeService;
+        _pageRegistry = new Dictionary<string, ObservableObject>(StringComparer.OrdinalIgnoreCase);
 
-        NavItems =
-        [
-            new NavigationItem("home", "首页", "\uE80F"),
-            new NavigationItem("config", "配置", "\uE713"),
-            new NavigationItem("editor", "编辑器", "\uE70F")
-        ];
+        NavItems = [];
+        foreach (var (key, label, icon, page) in pages)
+        {
+            NavItems.Add(new NavigationItem(key, label, icon));
+            _pageRegistry[key] = page;
+        }
 
         ToggleThemeCommand = new RelayCommand(_ => ToggleTheme());
         SetMenuPositionCommand = new RelayCommand(param =>
@@ -39,13 +38,12 @@ public sealed class ShellViewModel : ObservableObject
                 MenuPosition = position;
         });
 
-        SelectedNavItem = NavItems[0];
+        if (NavItems.Count > 0)
+            SelectedNavItem = NavItems[0];
     }
 
     public ObservableCollection<NavigationItem> NavItems { get; }
-
     public RelayCommand ToggleThemeCommand { get; }
-
     public RelayCommand SetMenuPositionCommand { get; }
 
     public NavigationItem? SelectedNavItem
@@ -57,7 +55,7 @@ public sealed class ShellViewModel : ObservableObject
             if (SetProperty(ref _selectedNavItem, value))
             {
                 if (value is not null) value.IsSelected = true;
-                NavigateTo(value?.Key);
+                CurrentPage = value is not null && _pageRegistry.TryGetValue(value.Key, out var page) ? page : null;
             }
         }
     }
@@ -80,20 +78,9 @@ public sealed class ShellViewModel : ObservableObject
         private set => SetProperty(ref _themeLabel, value);
     }
 
-    private void NavigateTo(string? key)
-    {
-        CurrentPage = key switch
-        {
-            "home" => _homePage,
-            "config" => _configPage,
-            "editor" => _editorPage,
-            _ => null
-        };
-    }
-
     private void ToggleTheme()
     {
-        ThemeManager.ToggleTheme();
-        ThemeLabel = ThemeManager.CurrentTheme == AppTheme.Light ? "切换深色" : "切换亮色";
+        _themeService.ToggleTheme();
+        ThemeLabel = _themeService.CurrentTheme == AppTheme.Light ? "切换深色" : "切换亮色";
     }
 }

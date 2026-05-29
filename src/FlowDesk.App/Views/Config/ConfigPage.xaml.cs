@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace FlowDesk.App.Views;
+namespace FlowDesk.App.Views.Config;
 
 public partial class ConfigPage : UserControl
 {

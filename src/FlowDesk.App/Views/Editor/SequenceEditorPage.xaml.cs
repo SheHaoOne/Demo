@@ -1,9 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using FlowDesk.App.ViewModels;
+using FlowDesk.App.ViewModels.Editor;
 
-namespace FlowDesk.App.Views;
+namespace FlowDesk.App.Views.Editor;
 
 public partial class SequenceEditorPage : UserControl
 {

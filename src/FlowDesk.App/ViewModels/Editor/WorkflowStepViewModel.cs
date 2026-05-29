@@ -1,9 +1,13 @@
 using System.Collections.ObjectModel;
 using FlowDesk.Abstractions;
+using FlowDesk.App.ViewModels.Shared;
 using FlowDesk.UI.Mvvm;
 
-namespace FlowDesk.App.ViewModels;
+namespace FlowDesk.App.ViewModels.Editor;
 
+/// <summary>
+/// 工作流步骤 ViewModel。
+/// </summary>
 public sealed class WorkflowStepViewModel : ObservableObject
 {
     private string _displayName;
@@ -12,13 +16,12 @@ public sealed class WorkflowStepViewModel : ObservableObject
     {
         Model = model;
         _displayName = model.DisplayName;
-        Settings = new ObservableCollection<SettingViewModel>(
-            model.Settings.Select(pair => new SettingViewModel(pair.Key, pair.Value)));
+        Settings = new ObservableCollection<KeyValueViewModel>(
+            model.Settings.Select(pair => new KeyValueViewModel(pair.Key, pair.Value)));
     }
 
     public WorkflowStepDefinition Model { get; }
-
-    public ObservableCollection<SettingViewModel> Settings { get; }
+    public ObservableCollection<KeyValueViewModel> Settings { get; }
 
     public string DisplayName
     {
@@ -26,9 +29,7 @@ public sealed class WorkflowStepViewModel : ObservableObject
         set
         {
             if (SetProperty(ref _displayName, value))
-            {
                 Model.DisplayName = value;
-            }
         }
     }
 
@@ -37,27 +38,8 @@ public sealed class WorkflowStepViewModel : ObservableObject
     public void SyncSettingsToModel()
     {
         Model.Settings = Settings.ToDictionary(
-            setting => setting.Key,
-            setting => setting.Value,
+            s => s.Key,
+            s => s.Value,
             StringComparer.OrdinalIgnoreCase);
-    }
-}
-
-public sealed class SettingViewModel : ObservableObject
-{
-    private string _value;
-
-    public SettingViewModel(string key, string value)
-    {
-        Key = key;
-        _value = value;
-    }
-
-    public string Key { get; }
-
-    public string Value
-    {
-        get => _value;
-        set => SetProperty(ref _value, value);
     }
 }

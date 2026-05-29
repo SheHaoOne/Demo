@@ -1,5 +1,6 @@
 using System.Windows;
 using FlowDesk.UI;
+using FlowDesk.UI.Themes;
 
 namespace FlowDesk.App;
 

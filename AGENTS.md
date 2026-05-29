@@ -13,11 +13,19 @@ This repository contains a .NET 8 WPF desktop application skeleton named FlowDes
 
 ### Project layout
 
-- `src/FlowDesk.Abstractions` - plugin contracts and workflow data models.
-- `src/FlowDesk.Core` - plugin catalog, assembly loader, workflow runner, and JSON serializer.
+- `src/FlowDesk.Abstractions` - plugin contracts, workflow data models, and abstraction interfaces (`IWorkflowRunner`, `IWorkflowSerializer`, `IPluginCatalog`).
+- `src/FlowDesk.Core` - plugin catalog, assembly loader, workflow runner, and JSON serializer (implements Abstractions interfaces).
 - `src/FlowDesk.SamplePlugin` - built-in sample workflow step plugins.
-- `src/FlowDesk.UI` - shared WPF styles, resource dictionaries, and MVVM infrastructure (`ObservableObject`, `RelayCommand`).
-- `src/FlowDesk.App` - WPF MVVM desktop shell (references `FlowDesk.UI` for styles and MVVM base classes).
+- `src/FlowDesk.UI` - shared WPF styles, resource dictionaries, MVVM infrastructure (`ObservableObject`, `RelayCommand`), theme service (`IThemeService` / `WpfThemeService`), and navigation models.
+- `src/FlowDesk.App` - WPF MVVM desktop shell with SOLID-based structure:
+  - `Composition/` - `AppCompositionRoot` (DI wiring).
+  - `Services/` - `IWorkflowExecutionService` / `WorkflowExecutionService`, `AppBootstrapper`.
+  - `ViewModels/Shell/` - `ShellViewModel` (navigation + layout only).
+  - `ViewModels/Home/` - `HomeViewModel`, `StepNodeViewModel`.
+  - `ViewModels/Editor/` - `SequenceEditorViewModel`, `WorkflowStepViewModel`, `PluginCardViewModel`, `PluginCategoryViewModel`.
+  - `ViewModels/Config/` - `ConfigViewModel`.
+  - `ViewModels/Shared/` - `KeyValueViewModel` (replaces duplicate `SettingViewModel` / `ConfigItemViewModel`).
+  - `Views/Home/`, `Views/Config/`, `Views/Editor/` - XAML views in matching subdirectories.
 - `tests/FlowDesk.Core.Tests` - dependency-free executable test project.
 
 ### Build and test

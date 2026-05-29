@@ -3,7 +3,7 @@ using FlowDesk.Abstractions;
 
 namespace FlowDesk.Core;
 
-public sealed class JsonWorkflowSerializer
+public sealed class JsonWorkflowSerializer : IWorkflowSerializer
 {
     private static readonly JsonSerializerOptions Options = new()
     {

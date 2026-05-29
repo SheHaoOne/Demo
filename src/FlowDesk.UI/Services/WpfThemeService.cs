@@ -1,12 +1,12 @@
 using System.Windows;
 using FlowDesk.UI.Themes;
 
-namespace FlowDesk.UI;
+namespace FlowDesk.UI.Services;
 
 /// <summary>
-/// 静态便捷入口（向后兼容）。新代码应优先注入 <see cref="FlowDesk.UI.Services.IThemeService"/>。
+/// WPF 主题服务实现，通过替换 Application.Resources 中的资源字典实现主题切换。
 /// </summary>
-public static class ThemeManager
+public sealed class WpfThemeService : IThemeService
 {
     private static readonly Uri LightThemeUri =
         new("pack://application:,,,/FlowDesk.UI;component/Themes/Light.xaml", UriKind.Absolute);
@@ -14,28 +14,29 @@ public static class ThemeManager
     private static readonly Uri DarkThemeUri =
         new("pack://application:,,,/FlowDesk.UI;component/Themes/Dark.xaml", UriKind.Absolute);
 
-    private static ResourceDictionary? _currentThemeDictionary;
-    private static AppTheme _currentTheme = AppTheme.Light;
+    private ResourceDictionary? _currentThemeDictionary;
 
-    public static AppTheme CurrentTheme => _currentTheme;
+    public AppTheme CurrentTheme { get; private set; } = AppTheme.Light;
 
-    public static void ApplyTheme(AppTheme theme)
+    public void ApplyTheme(AppTheme theme)
     {
         var app = Application.Current;
         if (app is null) return;
 
         var mergedDicts = app.Resources.MergedDictionaries;
+
         if (_currentThemeDictionary is not null)
             mergedDicts.Remove(_currentThemeDictionary);
 
         var uri = theme == AppTheme.Dark ? DarkThemeUri : LightThemeUri;
         _currentThemeDictionary = new ResourceDictionary { Source = uri };
         mergedDicts.Insert(0, _currentThemeDictionary);
-        _currentTheme = theme;
+
+        CurrentTheme = theme;
     }
 
-    public static void ToggleTheme()
+    public void ToggleTheme()
     {
-        ApplyTheme(_currentTheme == AppTheme.Light ? AppTheme.Dark : AppTheme.Light);
+        ApplyTheme(CurrentTheme == AppTheme.Light ? AppTheme.Dark : AppTheme.Light);
     }
 }

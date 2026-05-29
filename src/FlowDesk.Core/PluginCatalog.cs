@@ -2,7 +2,7 @@ using FlowDesk.Abstractions;
 
 namespace FlowDesk.Core;
 
-public sealed class PluginCatalog
+public sealed class PluginCatalog : IPluginCatalog
 {
     private readonly Dictionary<string, IWorkflowStepPlugin> _plugins = new(StringComparer.OrdinalIgnoreCase);
 

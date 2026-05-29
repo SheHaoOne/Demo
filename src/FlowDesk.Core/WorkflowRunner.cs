@@ -2,11 +2,11 @@ using FlowDesk.Abstractions;
 
 namespace FlowDesk.Core;
 
-public sealed class WorkflowRunner
+public sealed class WorkflowRunner : IWorkflowRunner
 {
-    private readonly PluginCatalog _catalog;
+    private readonly IPluginCatalog _catalog;
 
-    public WorkflowRunner(PluginCatalog catalog)
+    public WorkflowRunner(IPluginCatalog catalog)
     {
         _catalog = catalog;
     }

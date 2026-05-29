@@ -1,22 +1,26 @@
 <Window x:Class="FlowDesk.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:FlowDesk.App.ViewModels"
-        xmlns:v="clr-namespace:FlowDesk.App.Views"
+        xmlns:home="clr-namespace:FlowDesk.App.ViewModels.Home"
+        xmlns:config="clr-namespace:FlowDesk.App.ViewModels.Config"
+        xmlns:editor="clr-namespace:FlowDesk.App.ViewModels.Editor"
+        xmlns:vHome="clr-namespace:FlowDesk.App.Views.Home"
+        xmlns:vConfig="clr-namespace:FlowDesk.App.Views.Config"
+        xmlns:vEditor="clr-namespace:FlowDesk.App.Views.Editor"
         Title="FlowDesk" Height="780" Width="1200" MinHeight="600" MinWidth="960"
         Background="{DynamicResource AppBackgroundBrush}"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <!-- 页面 ViewModel → View 映射 -->
-        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
-            <v:HomePage />
+        <DataTemplate DataType="{x:Type home:HomeViewModel}">
+            <vHome:HomePage />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:ConfigViewModel}">
-            <v:ConfigPage />
+        <DataTemplate DataType="{x:Type config:ConfigViewModel}">
+            <vConfig:ConfigPage />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:SequenceEditorViewModel}">
-            <v:SequenceEditorPage />
+        <DataTemplate DataType="{x:Type editor:SequenceEditorViewModel}">
+            <vEditor:SequenceEditorPage />
         </DataTemplate>
     </Window.Resources>
 
