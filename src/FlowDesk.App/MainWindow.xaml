@@ -1,0 +1,74 @@
+<Window x:Class="FlowDesk.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="FlowDesk" Height="720" Width="1120" MinHeight="600" MinWidth="960">
+    <DockPanel Margin="16">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,12">
+            <TextBlock Text="Workflow:" FontWeight="SemiBold" Margin="0,0,8,8" />
+            <TextBox Width="280"
+                     Margin="0,0,12,8"
+                     Text="{Binding SequenceName, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="New" Command="{Binding NewCommand}" />
+            <Button Content="Open" Command="{Binding OpenCommand}" />
+            <Button Content="Save" Command="{Binding SaveCommand}" />
+            <Button Content="Run" Command="{Binding RunCommand}" FontWeight="SemiBold" />
+            <TextBlock Text="{Binding Status}" Margin="8,0,0,8" />
+        </StackPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="320" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="180" />
+            </Grid.RowDefinitions>
+
+            <GroupBox Grid.Column="0" Grid.RowSpan="2" Header="Available plugins">
+                <DockPanel Margin="8">
+                    <Button DockPanel.Dock="Bottom"
+                            Content="Add to workflow"
+                            Command="{Binding AddPluginCommand}" />
+                    <ListBox ItemsSource="{Binding Plugins}"
+                             SelectedItem="{Binding SelectedPlugin}"
+                             DisplayMemberPath="DisplayName" />
+                </DockPanel>
+            </GroupBox>
+
+            <GroupBox Grid.Column="2" Header="Sequence editor">
+                <DockPanel Margin="8">
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                        <Button Content="Move up" Command="{Binding MoveStepUpCommand}" />
+                        <Button Content="Move down" Command="{Binding MoveStepDownCommand}" />
+                        <Button Content="Remove" Command="{Binding RemoveStepCommand}" />
+                    </StackPanel>
+                    <ListBox ItemsSource="{Binding Steps}"
+                             SelectedItem="{Binding SelectedStep}"
+                             DisplayMemberPath="DisplayName" />
+                </DockPanel>
+            </GroupBox>
+
+            <GroupBox Grid.Column="4" Header="Step settings">
+                <DataGrid ItemsSource="{Binding SelectedStepSettings}"
+                          Margin="8"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          HeadersVisibility="Column">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key}" IsReadOnly="True" Width="*" />
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="2*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+
+            <GroupBox Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="1" Header="Execution log" Margin="0,12,0,0">
+                <ListBox ItemsSource="{Binding ExecutionLog}" Margin="8" />
+            </GroupBox>
+        </Grid>
+    </DockPanel>
+</Window>

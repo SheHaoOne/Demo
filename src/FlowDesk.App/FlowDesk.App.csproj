@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FlowDesk.Abstractions\FlowDesk.Abstractions.csproj" />
+    <ProjectReference Include="..\FlowDesk.Core\FlowDesk.Core.csproj" />
+    <ProjectReference Include="..\FlowDesk.SamplePlugin\FlowDesk.SamplePlugin.csproj" />
+  </ItemGroup>
+</Project>
